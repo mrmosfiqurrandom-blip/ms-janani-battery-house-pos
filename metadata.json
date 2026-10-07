@@ -1,0 +1,6 @@
+{
+  "name": "VoltPulse POS & Hardware ERP",
+  "description": "Complete Electronics Hardware Shop POS & Business Management System with Old Battery Buyback, Supplier Commissions, and Financial Management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

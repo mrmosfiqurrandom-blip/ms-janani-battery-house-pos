@@ -1,0 +1,384 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role-based access control (admin, manager, cashier).",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "role": { "type": "string", "enum": ["admin", "manager", "cashier", "ADMIN", "MANAGER", "CASHIER"] },
+        "status": { "type": "string", "enum": ["ACTIVE", "DISABLED"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "role"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Product catalog item.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 200 },
+        "sku": { "type": "string", "maxLength": 50 },
+        "barcode": { "type": "string", "maxLength": 50 },
+        "brand": { "type": "string", "maxLength": 100 },
+        "category": { "type": "string", "maxLength": 100 },
+        "subcategory": { "type": "string", "maxLength": 100 },
+        "unit": { "type": "string", "maxLength": 30 },
+        "purchasePrice": { "type": "number" },
+        "sellingPrice": { "type": "number" },
+        "minSellingPrice": { "type": "number" },
+        "currentStock": { "type": "number" },
+        "minStockLevel": { "type": "number" },
+        "productType": { "type": "string", "maxLength": 50 },
+        "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE"] },
+        "description": { "type": "string", "maxLength": 500 },
+        "image": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "sku", "sellingPrice", "currentStock"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Product category grouping.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 100 },
+        "subcategories": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Customer entity tracking contact and accounts receivable.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "email": { "type": "string", "maxLength": 150 },
+        "address": { "type": "string", "maxLength": 300 },
+        "openingBalance": { "type": "number" },
+        "creditLimit": { "type": "number" },
+        "currentDue": { "type": "number" },
+        "totalPurchased": { "type": "number" },
+        "totalPaid": { "type": "number" },
+        "notes": { "type": "string", "maxLength": 500 },
+        "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "phone", "currentDue"]
+    },
+    "Supplier": {
+      "title": "Supplier",
+      "description": "Manufacturer or distributor entity tracking purchases, payables, and commissions.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 150 },
+        "contactPerson": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "email": { "type": "string", "maxLength": 150 },
+        "address": { "type": "string", "maxLength": 300 },
+        "openingBalance": { "type": "number" },
+        "currentDue": { "type": "number" },
+        "totalPurchased": { "type": "number" },
+        "totalPaid": { "type": "number" },
+        "commissionEarnedTotal": { "type": "number" },
+        "commissionDueTotal": { "type": "number" },
+        "notes": { "type": "string", "maxLength": 500 },
+        "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "phone", "currentDue"]
+    },
+    "Sale": {
+      "title": "Sale",
+      "description": "Sale transaction with customer due and payment details.",
+      "type": "object",
+      "properties": {
+        "invoiceNo": { "type": "string", "maxLength": 50 },
+        "date": { "type": "string", "format": "date-time" },
+        "customerId": { "type": "string", "maxLength": 128 },
+        "customerName": { "type": "string", "maxLength": 150 },
+        "customerPhone": { "type": "string", "maxLength": 30 },
+        "grossSale": { "type": "number" },
+        "salesDiscount": { "type": "number" },
+        "oldBatteryBuybackAmount": { "type": "number" },
+        "netPayable": { "type": "number" },
+        "paidAmount": { "type": "number" },
+        "dueAmount": { "type": "number" },
+        "paymentMethod": { "type": "string" },
+        "accountId": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string" },
+        "createdBy": { "type": "string", "maxLength": 100 },
+        "notes": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["invoiceNo", "netPayable", "paidAmount", "dueAmount"]
+    },
+    "SaleItem": {
+      "title": "SaleItem",
+      "description": "Itemized sold product line in sale_items.",
+      "type": "object",
+      "properties": {
+        "saleId": { "type": "string" },
+        "invoiceNo": { "type": "string" },
+        "productId": { "type": "string" },
+        "productName": { "type": "string" },
+        "sku": { "type": "string" },
+        "unit": { "type": "string" },
+        "unitPrice": { "type": "number" },
+        "quantity": { "type": "number" },
+        "total": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["saleId", "productId", "unitPrice", "quantity", "total"]
+    },
+    "SalesReturn": {
+      "title": "SalesReturn",
+      "description": "Returned items from sales reversing stock in sales_returns.",
+      "type": "object",
+      "properties": {
+        "returnNo": { "type": "string" },
+        "saleInvoiceNo": { "type": "string" },
+        "date": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "productId": { "type": "string" },
+        "productName": { "type": "string" },
+        "quantity": { "type": "number" },
+        "refundAmount": { "type": "number" },
+        "reason": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["returnNo", "saleInvoiceNo", "productId", "quantity", "refundAmount"]
+    },
+    "Purchase": {
+      "title": "Purchase",
+      "description": "Supplier purchase record.",
+      "type": "object",
+      "properties": {
+        "purchaseNo": { "type": "string" },
+        "supplierId": { "type": "string" },
+        "supplierName": { "type": "string" },
+        "date": { "type": "string" },
+        "subtotal": { "type": "number" },
+        "tax": { "type": "number" },
+        "total": { "type": "number" },
+        "paidAmount": { "type": "number" },
+        "dueAmount": { "type": "number" },
+        "paymentMethod": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["purchaseNo", "supplierId", "total"]
+    },
+    "PurchaseItem": {
+      "title": "PurchaseItem",
+      "description": "Itemized purchased product in purchase_items.",
+      "type": "object",
+      "properties": {
+        "purchaseId": { "type": "string" },
+        "purchaseNo": { "type": "string" },
+        "productId": { "type": "string" },
+        "productName": { "type": "string" },
+        "unit": { "type": "string" },
+        "quantity": { "type": "number" },
+        "purchaseCost": { "type": "number" },
+        "total": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["purchaseId", "productId", "quantity", "purchaseCost", "total"]
+    },
+    "PurchaseReturn": {
+      "title": "PurchaseReturn",
+      "description": "Product returned to supplier reversing stock in purchase_returns.",
+      "type": "object",
+      "properties": {
+        "returnNo": { "type": "string" },
+        "purchaseInvoiceNo": { "type": "string" },
+        "date": { "type": "string" },
+        "supplierId": { "type": "string" },
+        "supplierName": { "type": "string" },
+        "productId": { "type": "string" },
+        "productName": { "type": "string" },
+        "quantity": { "type": "number" },
+        "returnAmount": { "type": "number" },
+        "reason": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["returnNo", "purchaseInvoiceNo", "productId", "quantity", "returnAmount"]
+    },
+    "StockMovement": {
+      "title": "StockMovement",
+      "description": "Inventory ledger movement audit entry in stock_movements.",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string" },
+        "productId": { "type": "string" },
+        "productName": { "type": "string" },
+        "sku": { "type": "string" },
+        "type": { "type": "string", "enum": ["SALE", "PURCHASE", "SALES_RETURN", "PURCHASE_RETURN", "ADJUSTMENT", "DAMAGE", "OPENING"] },
+        "quantityIn": { "type": "number" },
+        "quantityOut": { "type": "number" },
+        "balance": { "type": "number" },
+        "reference": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["productId", "type", "reference"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "description": "Customer and supplier payment transaction in payments.",
+      "type": "object",
+      "properties": {
+        "paymentNo": { "type": "string" },
+        "type": { "type": "string", "enum": ["CUSTOMER", "SUPPLIER"] },
+        "partyId": { "type": "string" },
+        "partyName": { "type": "string" },
+        "date": { "type": "string" },
+        "amount": { "type": "number" },
+        "accountId": { "type": "string" },
+        "paymentMethod": { "type": "string" },
+        "reference": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["paymentNo", "type", "partyId", "amount"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "Operating expense voucher.",
+      "type": "object",
+      "properties": {
+        "expenseNo": { "type": "string" },
+        "date": { "type": "string" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "amount": { "type": "number" },
+        "accountId": { "type": "string" },
+        "paymentMethod": { "type": "string" },
+        "reference": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["expenseNo", "category", "amount"]
+    },
+    "BuybackRecord": {
+      "title": "BuybackRecord",
+      "description": "Old battery scrap/buyback tracking in buyback_records.",
+      "type": "object",
+      "properties": {
+        "saleId": { "type": "string" },
+        "invoiceNo": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "batteryType": { "type": "string" },
+        "brand": { "type": "string" },
+        "capacityAh": { "type": "string" },
+        "condition": { "type": "string" },
+        "quantity": { "type": "number" },
+        "unitPrice": { "type": "number" },
+        "totalAmount": { "type": "number" },
+        "status": { "type": "string", "enum": ["IN_STOCK", "SOLD", "SCRAPPED"] },
+        "date": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["batteryType", "quantity", "unitPrice", "totalAmount", "status"]
+    },
+    "Setting": {
+      "title": "Setting",
+      "description": "Application and store settings configuration in settings.",
+      "type": "object",
+      "properties": {
+        "shopName": { "type": "string" },
+        "tagline": { "type": "string" },
+        "address": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "currency": { "type": "string" },
+        "currencySymbol": { "type": "string" },
+        "defaultTaxRate": { "type": "number" },
+        "lowStockThreshold": { "type": "number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopName", "currencySymbol"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles and RBAC permissions."
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Product catalog and inventory quantities."
+    },
+    "/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Product categories."
+    },
+    "/customers/{customerId}": {
+      "schema": "Customer",
+      "description": "Customer accounts and outstanding ledger receivables."
+    },
+    "/suppliers/{supplierId}": {
+      "schema": "Supplier",
+      "description": "Supplier accounts and purchase payable liabilities."
+    },
+    "/sales/{saleId}": {
+      "schema": "Sale",
+      "description": "Retail sales transactions."
+    },
+    "/sale_items/{itemId}": {
+      "schema": "SaleItem",
+      "description": "Line items associated with sales."
+    },
+    "/sales_returns/{returnId}": {
+      "schema": "SalesReturn",
+      "description": "Sales returns that reverse product stock."
+    },
+    "/purchases/{purchaseId}": {
+      "schema": "Purchase",
+      "description": "Inventory purchase transactions."
+    },
+    "/purchase_items/{itemId}": {
+      "schema": "PurchaseItem",
+      "description": "Line items associated with purchases."
+    },
+    "/purchase_returns/{returnId}": {
+      "schema": "PurchaseReturn",
+      "description": "Purchase returns that reverse product stock."
+    },
+    "/stock_movements/{movementId}": {
+      "schema": "StockMovement",
+      "description": "Stock movement audit trail."
+    },
+    "/payments/{paymentId}": {
+      "schema": "Payment",
+      "description": "Customer dues collection and supplier disbursements."
+    },
+    "/expenses/{expenseId}": {
+      "schema": "Expense",
+      "description": "Business operating expense vouchers."
+    },
+    "/buyback_records/{recordId}": {
+      "schema": "BuybackRecord",
+      "description": "Old battery scrap and recycling buybacks."
+    },
+    "/settings/{settingId}": {
+      "schema": "Setting",
+      "description": "Store profile and configuration settings."
+    }
+  }
+}

@@ -1,0 +1,21 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+*.local
+
+# Firebase credentials & service accounts
+*service-account*.json
+*serviceAccountKey*.json
+*-adminsdk-*.json
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+
+# Functions build output
+backend/functions/lib/
+backend/functions/node_modules/
