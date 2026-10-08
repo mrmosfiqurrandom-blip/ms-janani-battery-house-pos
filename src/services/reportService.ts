@@ -59,15 +59,38 @@ export const reportService = {
   async getDashboardMetrics(): Promise<DashboardMetrics> {
     const [sales, purchases, expenses, accounts, customers, suppliers, commissions, oldBatSummary, products] =
       await Promise.all([
-        salesService.getSales(),
-        purchaseService.getPurchases(),
-        expenseService.getExpenses(),
-        accountService.getAccounts(),
-        customerService.getCustomers(),
-        supplierService.getSuppliers(),
-        commissionService.getSummary(),
-        oldBatteryService.getSummary(),
-        productService.getProducts(),
+        salesService.getSales().catch((e) => {
+          console.warn('Sales fetch notice:', e);
+          return [];
+        }),
+        purchaseService.getPurchases().catch((e) => {
+          console.warn('Purchases fetch notice:', e);
+          return [];
+        }),
+        expenseService.getExpenses().catch((e) => {
+          console.warn('Expenses fetch notice:', e);
+          return [];
+        }),
+        accountService.getAccounts().catch((e) => {
+          console.warn('Accounts fetch notice:', e);
+          return [];
+        }),
+        customerService.getCustomers().catch((e) => {
+          console.warn('Customers fetch notice:', e);
+          return [];
+        }),
+        supplierService.getSuppliers().catch((e) => {
+          console.warn('Suppliers fetch notice:', e);
+          return [];
+        }),
+        commissionService.getSummary().catch(() => ({ totalEarned: 0, totalReceived: 0, totalDue: 0 })),
+        oldBatteryService
+          .getSummary()
+          .catch(() => ({ inStockCount: 0, totalBuybackCost: 0, soldValueTotal: 0, totalProfitLoss: 0 })),
+        productService.getProducts().catch((e) => {
+          console.warn('Products fetch notice:', e);
+          return [];
+        }),
       ]);
 
     // Active sales (not voided)

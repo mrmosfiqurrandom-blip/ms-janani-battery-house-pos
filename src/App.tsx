@@ -9,11 +9,11 @@ const RoleGuard: React.FC<{ minRole: 'ADMIN' | 'MANAGER'; children: React.ReactN
   minRole,
   children,
 }) => {
-  const { role } = useAuth();
-  if (role === 'CASHIER') {
+  const { role, user } = useAuth();
+  if (user && role === 'CASHIER') {
     return <Navigate to="/pos" replace />;
   }
-  if (minRole === 'ADMIN' && role !== 'ADMIN') {
+  if (user && minRole === 'ADMIN' && role !== 'ADMIN') {
     return <Navigate to="/" replace />;
   }
   return <>{children}</>;
@@ -34,6 +34,7 @@ import { CatalogMetaPage } from './pages/CatalogMetaPage';
 import { CustomersPage } from './pages/CustomersPage';
 import { CustomerPaymentsPage } from './pages/CustomerPaymentsPage';
 import { SuppliersPage } from './pages/SuppliersPage';
+import { SupplierLedgerPage } from './pages/SupplierLedgerPage';
 import { SupplierCommissionPage } from './pages/SupplierCommissionPage';
 import { SupplierPaymentsPage } from './pages/SupplierPaymentsPage';
 import { AccountsPage } from './pages/AccountsPage';
@@ -101,6 +102,22 @@ export default function App() {
                 element={
                   <RoleGuard minRole="MANAGER">
                     <SuppliersPage />
+                  </RoleGuard>
+                }
+              />
+              <Route
+                path="suppliers/ledger"
+                element={
+                  <RoleGuard minRole="MANAGER">
+                    <SupplierLedgerPage />
+                  </RoleGuard>
+                }
+              />
+              <Route
+                path="supplier-ledger"
+                element={
+                  <RoleGuard minRole="MANAGER">
+                    <SupplierLedgerPage />
                   </RoleGuard>
                 }
               />

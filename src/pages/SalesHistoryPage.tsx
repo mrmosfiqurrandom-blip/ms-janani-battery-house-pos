@@ -189,11 +189,19 @@ export const SalesHistoryPage: React.FC = () => {
                       {sale.createdBy}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1">
+                      <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => setSelectedInvoice(sale)}
-                          className="p-1 text-slate-600 hover:text-slate-900 rounded"
-                          title="View / Print Invoice"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-slate-900 bg-amber-400 hover:bg-amber-300 rounded shadow-2xs transition-colors cursor-pointer"
+                          title="রিসিট প্রিন্ট করুন (Print Receipt)"
+                        >
+                          <Printer className="w-3.5 h-3.5" />
+                          <span>রিসিট প্রিন্ট</span>
+                        </button>
+                        <button
+                          onClick={() => setSelectedInvoice(sale)}
+                          className="p-1 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded"
+                          title="View Invoice"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
@@ -213,6 +221,73 @@ export const SalesHistoryPage: React.FC = () => {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile View Card List */}
+        <div className="sm:hidden divide-y divide-slate-100">
+          {sales.map((sale) => (
+            <div key={sale.id} className="p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="font-mono font-bold text-xs text-slate-900 block">
+                    #{sale.invoiceNo}
+                  </span>
+                  <span className="text-[10px] text-slate-400">
+                    {formatDateTime(sale.date)}
+                  </span>
+                </div>
+                <StatusBadge status={sale.status} />
+              </div>
+
+              <div className="flex items-center justify-between text-xs">
+                <div>
+                  <span className="font-semibold text-slate-800 block">{sale.customerName}</span>
+                  {sale.customerPhone && (
+                    <span className="text-[10px] text-slate-400 font-mono">{sale.customerPhone}</span>
+                  )}
+                </div>
+                <div className="text-right">
+                  <span className="text-[10px] text-slate-400 block">নিট বিক্রয়</span>
+                  <span className="font-mono font-bold text-slate-900">{formatBDT(sale.netPayable)}</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2 rounded-lg text-center text-xs">
+                <div>
+                  <span className="text-[10px] text-slate-400 block">পরিশোধ</span>
+                  <span className="font-mono font-bold text-emerald-700">{formatBDT(sale.paidAmount)}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-400 block">বকেয়া</span>
+                  <span className="font-mono font-bold text-rose-600">{formatBDT(sale.dueAmount)}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-400 block">পদ্ধতি</span>
+                  <span className="font-mono font-medium text-slate-700">{sale.paymentMethod}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-[10px] text-slate-400">বিক্রেতা: {sale.createdBy}</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setSelectedInvoice(sale)}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-lg shadow-2xs"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>রিসিট প্রিন্ট</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedInvoice(sale)}
+                    className="p-1.5 text-slate-500 hover:text-slate-800 rounded"
+                    title="চালান দেখুন"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

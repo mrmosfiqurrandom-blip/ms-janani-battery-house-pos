@@ -161,7 +161,13 @@ export const authService = {
 
   async logout(): Promise<void> {
     activeRoleOverride = null;
-    await firebaseSignOut(auth);
+    try {
+      if (auth.currentUser) {
+        await firebaseSignOut(auth);
+      }
+    } catch (err) {
+      console.warn('Sign out warning:', err);
+    }
   },
 
   async switchRole(role: UserRole): Promise<User | null> {

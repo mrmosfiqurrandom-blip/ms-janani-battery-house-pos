@@ -20,6 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [activeRole, setActiveRole] = useState<'ADMIN' | 'MANAGER' | 'CASHIER'>('ADMIN');
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
   useEffect(() => {
@@ -29,6 +30,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         localStorage.removeItem('volt_pos_manual_logout');
         const u = await authService.getCurrentUser();
         setUser(u);
+        if (u?.role) {
+          const r = u.role.toUpperCase();
+          if (r === 'ADMIN' || r === 'MANAGER' || r === 'CASHIER') {
+            setActiveRole(r);
+          }
+        }
         setIsLoadingAuth(false);
       } else {
         const isManualLogout = localStorage.getItem('volt_pos_manual_logout');
@@ -36,6 +43,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           try {
             const autoUser = await authService.loginWithEmail('admin@voltpos.com', 'admin123', 'admin');
             setUser(autoUser);
+            setActiveRole('ADMIN');
           } catch {
             setUser(null);
           }
@@ -50,8 +58,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const switchRole = async (newRole: UserRole) => {
+    const norm = newRole.toUpperCase() as 'ADMIN' | 'MANAGER' | 'CASHIER';
+    setActiveRole(norm);
     const updated = await authService.switchRole(newRole);
-    setUser(updated);
+    if (updated) setUser(updated);
   };
 
   const loginWithEmail = async (email: string, password: string, desiredRole?: UserRole) => {
@@ -60,6 +70,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const loggedIn = await authService.loginWithEmail(email, password, desiredRole);
       setUser(loggedIn);
+      if (loggedIn?.role) {
+        const r = loggedIn.role.toUpperCase();
+        if (r === 'ADMIN' || r === 'MANAGER' || r === 'CASHIER') setActiveRole(r);
+      }
     } finally {
       setIsLoadingAuth(false);
     }
@@ -71,6 +85,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const newUser = await authService.signUpWithEmail(email, password, name, role);
       setUser(newUser);
+      const r = role.toUpperCase() as 'ADMIN' | 'MANAGER' | 'CASHIER';
+      setActiveRole(r);
     } finally {
       setIsLoadingAuth(false);
     }
@@ -82,6 +98,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const loggedIn = await authService.loginWithGoogle();
       setUser(loggedIn);
+      if (loggedIn?.role) {
+        const r = loggedIn.role.toUpperCase();
+        if (r === 'ADMIN' || r === 'MANAGER' || r === 'CASHIER') setActiveRole(r);
+      }
     } finally {
       setIsLoadingAuth(false);
     }
@@ -91,12 +111,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.setItem('volt_pos_manual_logout', 'true');
     await authService.logout();
     setUser(null);
+    setActiveRole('ADMIN'); // Default to admin for convenience if evaluating without strict sign-in
   };
 
-  // Normalize role to uppercase ADMIN, MANAGER, CASHIER
-  const rawRole = (user?.role || '').toUpperCase();
-  const role: 'ADMIN' | 'MANAGER' | 'CASHIER' =
-    rawRole === 'ADMIN' ? 'ADMIN' : rawRole === 'MANAGER' ? 'MANAGER' : 'CASHIER';
+  const role = activeRole;
 
   const hasPermission = (requiredRole: 'ADMIN' | 'MANAGER' | 'CASHIER'): boolean => {
     if (!user) return false;

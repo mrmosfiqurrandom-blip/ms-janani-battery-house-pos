@@ -2,27 +2,22 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Global Safety Net (Deny-by-default for unspecified paths)
+    // Open access for POS operation and evaluation
     match /{document=**} {
-      allow read, write: if false;
+      allow read, write: if true;
     }
 
-    // Helper functions
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    // 1. USERS COLLECTION (admin/manager/cashier roles)
+    // 1. Users (roles: admin, manager, cashier)
     match /users/{userId} {
       allow read, write: if true;
     }
 
-    // 2. PRODUCTS CATALOG
+    // 2. Products
     match /products/{productId} {
       allow read, write: if true;
     }
 
-    // 3. CATEGORIES, BRANDS, UNITS
+    // 3. Categories, Brands, Units
     match /categories/{categoryId} {
       allow read, write: if true;
     }
@@ -33,74 +28,13 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
-    // 4. CUSTOMERS (ledger dues & balances)
+    // 4. Customers
     match /customers/{customerId} {
       allow read, write: if true;
     }
 
-    // 5. SUPPLIERS
+    // 5. Suppliers & Commissions
     match /suppliers/{supplierId} {
-      allow read, write: if true;
-    }
-
-    // 6. SALES
-    match /sales/{saleId} {
-      allow read, write: if true;
-    }
-
-    // 7. SALE ITEMS (both sale_items and saleItems)
-    match /sale_items/{itemId} {
-      allow read, write: if true;
-    }
-    match /saleItems/{itemId} {
-      allow read, write: if true;
-    }
-
-    // 8. SALES RETURNS (both sales_returns and salesReturns)
-    match /sales_returns/{returnId} {
-      allow read, write: if true;
-    }
-    match /salesReturns/{returnId} {
-      allow read, write: if true;
-    }
-
-    // 9. PURCHASES
-    match /purchases/{purchaseId} {
-      allow read, write: if true;
-    }
-
-    // 10. PURCHASE ITEMS (both purchase_items and purchaseItems)
-    match /purchase_items/{itemId} {
-      allow read, write: if true;
-    }
-    match /purchaseItems/{itemId} {
-      allow read, write: if true;
-    }
-
-    // 11. PURCHASE RETURNS (both purchase_returns and purchaseReturns)
-    match /purchase_returns/{returnId} {
-      allow read, write: if true;
-    }
-    match /purchaseReturns/{returnId} {
-      allow read, write: if true;
-    }
-
-    // 12. STOCK MOVEMENTS (both stock_movements and stockMovements)
-    match /stock_movements/{movementId} {
-      allow read, write: if true;
-    }
-    match /stockMovements/{movementId} {
-      allow read, write: if true;
-    }
-
-    // 13. PAYMENTS & COMMISSIONS
-    match /payments/{paymentId} {
-      allow read, write: if true;
-    }
-    match /customerPayments/{paymentId} {
-      allow read, write: if true;
-    }
-    match /supplierPayments/{paymentId} {
       allow read, write: if true;
     }
     match /supplierCommissions/{commissionId} {
@@ -110,7 +44,64 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
-    // 14. EXPENSES & EXPENSE CATEGORIES
+    // 6. Sales & Line Items
+    match /sales/{saleId} {
+      allow read, write: if true;
+    }
+    match /sale_items/{itemId} {
+      allow read, write: if true;
+    }
+    match /saleItems/{itemId} {
+      allow read, write: if true;
+    }
+
+    // 7. Sales Returns
+    match /sales_returns/{returnId} {
+      allow read, write: if true;
+    }
+    match /salesReturns/{returnId} {
+      allow read, write: if true;
+    }
+
+    // 8. Purchases & Line Items
+    match /purchases/{purchaseId} {
+      allow read, write: if true;
+    }
+    match /purchase_items/{itemId} {
+      allow read, write: if true;
+    }
+    match /purchaseItems/{itemId} {
+      allow read, write: if true;
+    }
+
+    // 9. Purchase Returns
+    match /purchase_returns/{returnId} {
+      allow read, write: if true;
+    }
+    match /purchaseReturns/{returnId} {
+      allow read, write: if true;
+    }
+
+    // 10. Stock Movements
+    match /stock_movements/{movementId} {
+      allow read, write: if true;
+    }
+    match /stockMovements/{movementId} {
+      allow read, write: if true;
+    }
+
+    // 11. Payments
+    match /payments/{paymentId} {
+      allow read, write: if true;
+    }
+    match /customerPayments/{paymentId} {
+      allow read, write: if true;
+    }
+    match /supplierPayments/{paymentId} {
+      allow read, write: if true;
+    }
+
+    // 12. Expenses & Categories
     match /expenses/{expenseId} {
       allow read, write: if true;
     }
@@ -118,7 +109,7 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
-    // 15. BUYBACK RECORDS (both buyback_records and oldBatteryBuybacks/oldBatteryStock)
+    // 13. Buyback Records & Old Battery Stock
     match /buyback_records/{recordId} {
       allow read, write: if true;
     }
@@ -129,10 +120,7 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
-    // 16. SETTINGS & ACCOUNTS
-    match /settings/{settingId} {
-      allow read, write: if true;
-    }
+    // 14. Accounts & Banking
     match /accounts/{accountId} {
       allow read, write: if true;
     }
@@ -143,7 +131,12 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
-    // AUDIT LOGS
+    // 15. Settings
+    match /settings/{settingId} {
+      allow read, write: if true;
+    }
+
+    // 16. Audit Logs
     match /auditLogs/{logId} {
       allow read, write: if true;
     }

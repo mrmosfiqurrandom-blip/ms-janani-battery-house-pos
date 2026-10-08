@@ -6,7 +6,7 @@ import { Supplier, Purchase, SupplierCommission } from '../types';
 import { formatBDT } from '../utils/formatters';
 import { StatusBadge } from '../components/StatusBadge';
 import { useToast } from '../context/ToastContext';
-import { Search, Plus, Eye, Building2, Phone, CreditCard, ArrowRight } from 'lucide-react';
+import { Search, Plus, Eye, Building2, Phone, CreditCard, ArrowRight, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const SuppliersPage: React.FC = () => {
@@ -93,13 +93,22 @@ export const SuppliersPage: React.FC = () => {
             Manage factory vendors, purchase payable liabilities, and rebate track records
           </p>
         </div>
-        <button
-          onClick={() => setIsAddOpen(true)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-md transition-colors"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>Add New Supplier</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/supplier-ledger"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-900 bg-amber-400 hover:bg-amber-300 rounded-md transition-colors shadow-2xs"
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>আধুনিক লেজার (Ledger)</span>
+          </Link>
+          <button
+            onClick={() => setIsAddOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-md transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Add New Supplier</span>
+          </button>
+        </div>
       </div>
 
       {/* Search Bar */}

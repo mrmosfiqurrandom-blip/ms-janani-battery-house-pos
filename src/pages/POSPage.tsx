@@ -71,6 +71,7 @@ export const POSPage: React.FC = () => {
   const [createdSale, setCreatedSale] = useState<Sale | null>(null);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [mobilePosTab, setMobilePosTab] = useState<'CATALOG' | 'CART'>('CATALOG');
 
   useEffect(() => {
     loadData();
@@ -380,12 +381,42 @@ export const POSPage: React.FC = () => {
           <Sparkles className="w-3.5 h-3.5 text-amber-700" />
           <span>Load Acceptance Test (৳20k Battery - ৳5k Buyback)</span>
         </button>
+        {/* Mobile Tab Switcher */}
+        <div className="lg:hidden flex rounded-lg bg-slate-200 p-1 text-xs font-semibold">
+          <button
+            type="button"
+            onClick={() => setMobilePosTab('CATALOG')}
+            className={`flex-1 py-2 rounded-md transition-colors cursor-pointer ${
+              mobilePosTab === 'CATALOG'
+                ? 'bg-white text-slate-900 shadow-xs'
+                : 'text-slate-600'
+            }`}
+          >
+            📦 পণ্য ক্যাটালগ
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobilePosTab('CART')}
+            className={`flex-1 py-2 rounded-md transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+              mobilePosTab === 'CART'
+                ? 'bg-amber-400 text-slate-950 shadow-xs font-bold'
+                : 'text-slate-600'
+            }`}
+          >
+            <span>🛒 কার্ট ও চেকআউট</span>
+            {cart.length > 0 && (
+              <span className="px-1.5 py-0.5 bg-slate-900 text-white rounded-full text-[10px]">
+                {cart.length}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* POS Two-Column Grid: Left Catalog & Search | Right Cart & Buyback Ledger */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* ================= LEFT COLUMN: PRODUCTS & SEARCH (7 Cols) ================= */}
-        <div className="lg:col-span-7 space-y-3">
+        <div className={`lg:col-span-7 space-y-3 ${mobilePosTab === 'CART' ? 'hidden lg:block' : 'block'}`}>
           {/* Barcode & Search Controls */}
           <div className="bg-white p-3.5 rounded-lg border border-slate-200 shadow-xs space-y-2.5">
             <form onSubmit={handleBarcodeSubmit} className="flex gap-2">
@@ -486,7 +517,7 @@ export const POSPage: React.FC = () => {
         </div>
 
         {/* ================= RIGHT COLUMN: CART, BUYBACK & CHECKOUT (5 Cols) ================= */}
-        <div className="lg:col-span-5 space-y-3">
+        <div className={`lg:col-span-5 space-y-3 ${mobilePosTab === 'CATALOG' ? 'hidden lg:block' : 'block'}`}>
           <div className="bg-white rounded-lg border border-slate-200 shadow-xs p-4 flex flex-col">
             {/* Customer Selection */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 mb-3">
@@ -909,6 +940,28 @@ export const POSPage: React.FC = () => {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Floating Mobile Cart Bar when browsing Catalog */}
+      {mobilePosTab === 'CATALOG' && cart.length > 0 && (
+        <div className="lg:hidden fixed bottom-14 left-3 right-3 z-20 shadow-xl">
+          <button
+            type="button"
+            onClick={() => setMobilePosTab('CART')}
+            className="w-full py-2.5 px-4 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-xl shadow-lg flex items-center justify-between cursor-pointer border border-amber-300"
+          >
+            <div className="flex items-center gap-2 text-xs">
+              <div className="w-6 h-6 rounded-full bg-slate-950 text-white flex items-center justify-center text-[11px] font-mono">
+                {cart.length}
+              </div>
+              <span>কার্ট দেখুন ও চেকআউট করুন</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-sm font-mono font-black">
+              <span>{formatBDT(grossSale)}</span>
+              <span>›</span>
+            </div>
+          </button>
         </div>
       )}
 

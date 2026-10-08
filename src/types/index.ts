@@ -99,6 +99,8 @@ export interface Product {
   sellingPrice: number;
   minSellingPrice: number;
   currentStock: number;
+  openingStock?: number;
+  ownStock?: number;
   minStockLevel: number;
   productType: ProductType;
   status: 'ACTIVE' | 'INACTIVE';
@@ -215,6 +217,9 @@ export interface Purchase {
   subtotal: number;
   tax: number;
   total: number;
+  totalAmount?: number;
+  discountAmount?: number;
+  netPayable?: number;
   paidAmount: number;
   dueAmount: number;
   paymentMethod: PaymentMethod;

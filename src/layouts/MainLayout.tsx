@@ -32,6 +32,7 @@ import {
   LogIn,
   LogOut,
   User as UserIcon,
+  BookOpen,
 } from 'lucide-react';
 
 export const MainLayout: React.FC = () => {
@@ -44,6 +45,16 @@ export const MainLayout: React.FC = () => {
 
   const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     switchRole(e.target.value as UserRole);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      success('লগআউট সম্পন্ন', 'সফলভাবে লগআউট করা হয়েছে।');
+      setShowAuthModal(true);
+    } catch {
+      error('লগআউট ত্রুটি', 'লগআউট করতে সমস্যা হয়েছে');
+    }
   };
 
   const handleSeedDatabase = async () => {
@@ -214,6 +225,10 @@ export const MainLayout: React.FC = () => {
                     <Building2 className="w-4 h-4" />
                     <span>Suppliers</span>
                   </NavLink>
+                  <NavLink to="/supplier-ledger" className={navLinkClasses} onClick={() => setMobileMenuOpen(false)}>
+                    <BookOpen className="w-4 h-4 text-amber-600" />
+                    <span className="font-semibold text-amber-700">Supplier Ledger (লেজার)</span>
+                  </NavLink>
                   <NavLink to="/supplier-commission" className={navLinkClasses} onClick={() => setMobileMenuOpen(false)}>
                     <DollarSign className="w-4 h-4 text-emerald-600" />
                     <span className="font-semibold text-emerald-700">Supplier Commission</span>
@@ -299,7 +314,7 @@ export const MainLayout: React.FC = () => {
                 </p>
               </div>
             </div>
-            {auth.currentUser ? (
+            {auth.currentUser || user ? (
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setShowAuthModal(true)}
@@ -309,9 +324,9 @@ export const MainLayout: React.FC = () => {
                   <UserIcon className="w-3.5 h-3.5" />
                 </button>
                 <button
-                  onClick={logout}
-                  className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded transition-colors"
-                  title="Sign Out"
+                  onClick={handleLogout}
+                  className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded transition-colors"
+                  title="Sign Out (লগআউট)"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                 </button>
@@ -394,15 +409,119 @@ export const MainLayout: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-md transition-colors shadow-xs"
             >
               <ShoppingCart className="w-3.5 h-3.5" />
-              <span className="font-semibold">Open POS</span>
+              <span className="font-semibold hidden sm:inline">Open POS</span>
             </NavLink>
+
+            {/* User Account & Logout in Top Header */}
+            {auth.currentUser || user ? (
+              <div className="flex items-center gap-1 sm:gap-1.5">
+                <button
+                  onClick={() => setShowAuthModal(true)}
+                  className="flex items-center gap-1.5 p-1 sm:px-2 sm:py-1 rounded-md hover:bg-slate-100 text-xs text-slate-700 transition-colors cursor-pointer"
+                  title="অ্যাকাউন্ট পরিবর্তন করুন"
+                >
+                  <div className="w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-bold flex items-center justify-center text-[10px]">
+                    {(user?.name || auth.currentUser?.email || 'U')[0].toUpperCase()}
+                  </div>
+                  <span className="hidden lg:inline font-semibold text-slate-800">
+                    {user?.name || auth.currentUser?.displayName || 'Staff'}
+                  </span>
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-md transition-colors cursor-pointer"
+                  title="লগআউট করুন (Sign Out)"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">লগআউট</span>
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowAuthModal(true)}
+                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-md transition-colors shadow-2xs cursor-pointer"
+                title="স্টাফ লগইন"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>লগইন</span>
+              </button>
+            )}
           </div>
         </header>
 
         {/* Page Content Viewport */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-3 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-20 md:pb-8">
           <Outlet />
         </main>
+
+        {/* Mobile Bottom Navigation Bar (Thumb Friendly) */}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 flex items-center justify-around py-1.5 px-1 shadow-lg no-print">
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) =>
+              `flex flex-col items-center gap-0.5 text-[10px] font-medium transition-colors ${
+                isActive ? 'text-amber-600 font-bold' : 'text-slate-500'
+              }`
+            }
+          >
+            <LayoutDashboard className="w-4 h-4" />
+            <span>হোম</span>
+          </NavLink>
+          <NavLink
+            to="/pos"
+            className={({ isActive }) =>
+              `flex flex-col items-center gap-0.5 text-[10px] font-medium transition-colors ${
+                isActive ? 'text-amber-600 font-bold' : 'text-slate-500'
+              }`
+            }
+          >
+            <div className="w-7 h-7 -mt-2 rounded-full bg-amber-400 flex items-center justify-center text-slate-950 shadow-md">
+              <ShoppingCart className="w-3.5 h-3.5" />
+            </div>
+            <span>পিওএস</span>
+          </NavLink>
+          <NavLink
+            to="/sales-history"
+            className={({ isActive }) =>
+              `flex flex-col items-center gap-0.5 text-[10px] font-medium transition-colors ${
+                isActive ? 'text-amber-600 font-bold' : 'text-slate-500'
+              }`
+            }
+          >
+            <History className="w-4 h-4" />
+            <span>ইনভয়েস</span>
+          </NavLink>
+          <NavLink
+            to="/inventory/products"
+            className={({ isActive }) =>
+              `flex flex-col items-center gap-0.5 text-[10px] font-medium transition-colors ${
+                isActive ? 'text-amber-600 font-bold' : 'text-slate-500'
+              }`
+            }
+          >
+            <Package className="w-4 h-4" />
+            <span>প্রোডাক্ট</span>
+          </NavLink>
+          <NavLink
+            to="/supplier-ledger"
+            className={({ isActive }) =>
+              `flex flex-col items-center gap-0.5 text-[10px] font-medium transition-colors ${
+                isActive ? 'text-amber-600 font-bold' : 'text-slate-500'
+              }`
+            }
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>লেজার</span>
+          </NavLink>
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="flex flex-col items-center gap-0.5 text-[10px] font-medium text-slate-500 cursor-pointer"
+          >
+            <Menu className="w-4 h-4" />
+            <span>মেনু</span>
+          </button>
+        </nav>
       </div>
 
       {/* Staff Authentication Modal */}

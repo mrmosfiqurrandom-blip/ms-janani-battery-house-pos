@@ -60,12 +60,12 @@ export const DashboardPage: React.FC = () => {
     try {
       const [metricData, sales, products] = await Promise.all([
         reportService.getDashboardMetrics(),
-        salesService.getSales(),
-        productService.getProducts(),
+        salesService.getSales().catch(() => []),
+        productService.getProducts().catch(() => []),
       ]);
       setMetrics(metricData);
-      setRecentSales(sales.slice(0, 5));
-      setLowStockProducts(products.filter((p) => p.currentStock <= p.minStockLevel));
+      setRecentSales((sales || []).slice(0, 5));
+      setLowStockProducts((products || []).filter((p) => p.currentStock <= p.minStockLevel));
     } catch (err) {
       console.error('Failed to load dashboard:', err);
     } finally {
